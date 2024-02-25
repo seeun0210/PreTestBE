@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { UsersModel } from './users/entities/users.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ChatRoomModule } from './chat-room/chat-room.module';
+import { ChatRoomModel } from './chat-room/entity/chat-room.entity';
 
 @Module({
   imports: [
@@ -20,7 +22,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       username: 'postgres',
       password: 'postgres',
       database: 'groomPreTest',
-      entities: [UsersModel],
+      entities: [UsersModel, ChatRoomModel],
       //개발환경에서는 true
       //production한경에서는 false
       synchronize: true,
@@ -28,6 +30,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     UsersModule,
     AuthModule,
     CommonModule,
+    ChatRoomModule,
   ],
   controllers: [AppController],
   providers: [
