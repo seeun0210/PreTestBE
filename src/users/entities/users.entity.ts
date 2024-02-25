@@ -4,7 +4,7 @@ import { ChatRoomModel } from 'src/chat-room/entity/chat-room.entity';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
 import { stringValidationMessage } from 'src/common/validation-message/string-validation.message';
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 
 @Entity()
 export class UsersModel extends BaseModel {
@@ -38,4 +38,7 @@ export class UsersModel extends BaseModel {
   @ManyToMany(() => ChatRoomModel, (chatRoom) => chatRoom.members)
   @JoinTable()
   chatRooms: ChatRoomModel[];
+
+  @OneToMany(() => ChatRoomModel, (chatRoom) => chatRoom.admin)
+  managedChatRooms: ChatRoomModel[];
 }
