@@ -35,17 +35,17 @@ export class UsersService {
     return newUser;
   }
 
-  async getUserByEmail(user: Pick<UsersModel, 'email'>) {
-    return await this.usersRepository.findOne({
-      where: { email: user.email },
+  async getUserByEmail(email: string) {
+    return this.usersRepository.findOne({
+      where: { email },
     });
   }
 
   //유저가 속한 채팅방을 불러옴
-  async getUserWithChatRooms(user: Pick<UsersModel, 'id'>) {
+  async getUserWithChatRooms(userId: number) {
     return await this.usersRepository.findOne({
-      where: { id: user.id },
-      relations: ['chatRooms'],
+      where: { id: userId },
+      relations: ['chatRooms', 'chatRooms.members'],
     });
   }
 }

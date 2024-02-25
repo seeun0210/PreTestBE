@@ -80,7 +80,7 @@ export class AuthService {
     user: Pick<UsersModel, 'email' | 'password'>,
   ) {
     //Email로 일치하는 유저를 가져오는 로직은 usersService에 추가한다.
-    const existingUser = await this.usersService.getUserByEmail(user);
+    const existingUser = await this.usersService.getUserByEmail(user.email);
 
     //이메일로 찾아온 유저가 존재하지 않는다면,,,
     if (!existingUser) {
