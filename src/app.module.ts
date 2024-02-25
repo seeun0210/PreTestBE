@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { UsersModel } from './users/entities/users.entity';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CommonModule } from './common/common.module';
       username: 'postgres',
       password: 'postgres',
       database: 'groomPreTest',
+      entities: [UsersModel],
       //개발환경에서는 true
       //production한경에서는 false
       synchronize: true,
