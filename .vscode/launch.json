@@ -1,0 +1,19 @@
+{
+  // IntelliSense를 사용하여 가능한 특성에 대해 알아보세요.
+  // 기존 특성에 대한 설명을 보려면 가리킵니다.
+  // 자세한 내용을 보려면 https://go.microsoft.com/fwlink/?linkid=830387을(를) 방문하세요.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "BE DEBUB",
+      "runtimeExecutable": "npm", //어떤걸로 실행할건지,
+      "runtimeArgs": ["run", "start:debug"],
+      "console": "integratedTerminal",
+      "restart": true, //자동연결 할건지
+      "port": 9229,
+      "autoAttachChildProcesses": true //디버거를 자동으로 process에 붙을지 말지 결정
+    }
+  ]
+}
