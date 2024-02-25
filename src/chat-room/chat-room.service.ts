@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { ChatRoomModel } from './entity/chat-room.entity';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
@@ -61,7 +61,7 @@ export class ChatRoomService {
       throw new BadRequestException('존재하지 않는 채팅방입니다.');
     }
     // 비공개 채팅방이고 비밀번호가 제공된 경우, 비밀번호 일치 여부 확인
-    if (!isPublic && password) {
+    if (!existingChatRoom.isPublic && password) {
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(password, salt);
       const isPasswordMatch = await bcrypt.compare(
@@ -85,5 +85,15 @@ export class ChatRoomService {
     // 유저가 멤버로 없으면 멤버 추가 로직을 여기에 구현
     existingChatRoom.members.push(member);
     await this.chatRoomRepository.save(existingChatRoom);
+  }
+
+  //검색 단어로 채팅방 찾기
+  async searchChatRoomByTerm(term: string) {
+    return await this.chatRoomRepository.find({
+      where: [
+        { title: ILike(`%${term}%`) }, // title 필드에서 term을 포함하는 레코드 검색
+        { description: ILike(`%${term}%`) }, // description 필드에서 term을 포함하는 레코드 검색
+      ],
+    });
   }
 }

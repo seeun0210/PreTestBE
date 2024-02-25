@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ChatRoomService } from './chat-room.service';
@@ -35,7 +36,7 @@ export class ChatRoomController {
   //채팅방 만들기
   @Post()
   async createChatRoom(
-    @User('id') user: UsersModel,
+    @User() user: UsersModel,
     @Body() body: CreateChatRoomDto,
   ) {
     return await this.chatRoomService.createChatRoom(user, body);
@@ -50,5 +51,10 @@ export class ChatRoomController {
   ) {
     console.log(member);
     return await this.chatRoomService.addMemberToChatRoom(id, member, body);
+  }
+
+  @Get('search')
+  async searchChatRoom(@Query('term') term: string) {
+    return await this.chatRoomService.searchChatRoomByTerm(term);
   }
 }
