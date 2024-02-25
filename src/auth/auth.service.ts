@@ -128,4 +128,16 @@ export class AuthService {
       throw new UnauthorizedException('토큰이 만료되었거나 잘못된 토큰입니다');
     }
   }
+
+  //refreshToken으로 AccessToken 재발급
+  rotateToken(token: string, isRefreshToken: boolean) {
+    const decoded = this.jwtService.verify(token, {
+      secret: JWT_SECRET,
+    });
+
+    if (decoded.type !== 'refresh') {
+      throw new UnauthorizedException('토큰재발급은 refreshToken으로만 가능');
+    }
+    return this.signToken({ ...decoded }, isRefreshToken);
+  }
 }
