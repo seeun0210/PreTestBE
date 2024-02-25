@@ -40,4 +40,12 @@ export class UsersService {
       where: { email: user.email },
     });
   }
+
+  //유저가 속한 채팅방을 불러옴
+  async getUserWithChatRooms(user: Pick<UsersModel, 'id'>) {
+    return await this.usersRepository.findOne({
+      where: { id: user.id },
+      relations: ['chatRooms'],
+    });
+  }
 }

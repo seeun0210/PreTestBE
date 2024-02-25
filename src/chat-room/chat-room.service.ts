@@ -2,15 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ChatRoomModel } from './entity/chat-room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UsersModel } from 'src/users/entities/users.entity';
 
 @Injectable()
 export class ChatRoomService {
   constructor(
     @InjectRepository(ChatRoomModel)
-    private readonly ChatRoomRepository: Repository<ChatRoomModel>,
+    private readonly chatRoomRepository: Repository<ChatRoomModel>,
   ) {}
-
-  //유저가 속한 채팅방 불러오기
 
   //채팅방 생성
 
