@@ -34,4 +34,10 @@ export class UsersService {
 
     return newUser;
   }
+
+  async getUserByEmail(user: Pick<UsersModel, 'email'>) {
+    return await this.usersRepository.findOne({
+      where: { email: user.email },
+    });
+  }
 }

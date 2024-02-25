@@ -5,9 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 import { UsersModule } from 'src/users/users.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsersModel]), UsersModule],
+  imports: [
+    JwtModule.register({}),
+    TypeOrmModule.forFeature([UsersModel]),
+    UsersModule,
+  ],
   controllers: [AuthController],
   providers: [AuthService, UsersService],
 })
