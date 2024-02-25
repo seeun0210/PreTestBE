@@ -119,4 +119,13 @@ export class AuthService {
       expiresIn: isRefreshToken ? 3600 : 300,
     });
   }
+
+  //토큰 검증
+  verifyToken(token: string) {
+    try {
+      return this.jwtService.verify(token, { secret: JWT_SECRET });
+    } catch (e) {
+      throw new UnauthorizedException('토큰이 만료되었거나 잘못된 토큰입니다');
+    }
+  }
 }
