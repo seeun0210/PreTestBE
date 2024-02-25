@@ -43,7 +43,7 @@ export class ChatRoomController {
   }
 
   //채팅방 멤버로 들어가기
-  @Patch(':id')
+  @Patch(':id/join')
   async addMember(
     @User() member: UsersModel,
     @Param('id', ParseIntPipe) id: number,
@@ -51,6 +51,15 @@ export class ChatRoomController {
   ) {
     console.log(member);
     return await this.chatRoomService.addMemberToChatRoom(id, member, body);
+  }
+
+  //채팅방 탈퇴
+  @Patch(':id/leave')
+  async popMember(
+    @User() member: UsersModel,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.chatRoomService.leaveMemberFromChatRoom(member, id);
   }
 
   @Get('search')

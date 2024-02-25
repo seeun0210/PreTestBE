@@ -96,4 +96,35 @@ export class ChatRoomService {
       ],
     });
   }
+
+  //채팅방 탈퇴
+  async leaveMemberFromChatRoom(user: UsersModel, id: number) {
+    //해당 채팅방이 있는지 확인
+    const existingChatRoom = await this.chatRoomRepository.findOne({
+      where: { id },
+      relations: ['members'], // 멤버 정보를 함께 불러옵니다.
+    });
+
+    if (!existingChatRoom) {
+      throw new BadRequestException('존재하지 않는 채팅방입니다.');
+    }
+    //먼저 해당 채팅방의 멤버가 맞는지 확인
+    const isMember = existingChatRoom.members.some(
+      (existingMember) => existingMember.id === user.id,
+    );
+
+    if (!isMember) {
+      throw new BadRequestException('해당 채팅방의 멤버가 아닙니다.');
+    }
+
+    //여기까지 왔다면 탈퇴 시켜줌
+
+    // 멤버를 채팅방에서 제거
+    existingChatRoom.members = existingChatRoom.members.filter(
+      (member) => member.id !== user.id,
+    );
+
+    // 변경사항 저장
+    await this.chatRoomRepository.save(existingChatRoom);
+  }
 }
