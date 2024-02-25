@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { IsBoolean, IsString, Length } from 'class-validator';
 import { BaseModel } from 'src/common/entity/base.entity';
 import { lengthValidationMessage } from 'src/common/validation-message/length-validation.message';
@@ -24,6 +25,14 @@ export class ChatRoomModel extends BaseModel {
   @Column()
   @IsBoolean({ message: 'true or false만 가능합니다.' })
   isPublic: boolean;
+
+  @Column({
+    nullable: true,
+  })
+  @Exclude({
+    toPlainOnly: true,
+  })
+  password: string;
 
   @ManyToMany(() => UsersModel, (user) => user.chatRooms)
   members: UsersModel[];
