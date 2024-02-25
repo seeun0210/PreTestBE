@@ -51,7 +51,7 @@ export class ChatRoomService {
     chatRoomDto: AddMemberDto,
   ) {
     const { isPublic, password } = chatRoomDto;
-
+    console.log(isPublic, password);
     const existingChatRoom = await this.chatRoomRepository.findOne({
       where: { id },
       relations: ['members'], // 멤버 정보를 함께 불러옵니다.
@@ -61,9 +61,11 @@ export class ChatRoomService {
       throw new BadRequestException('존재하지 않는 채팅방입니다.');
     }
     // 비공개 채팅방이고 비밀번호가 제공된 경우, 비밀번호 일치 여부 확인
-    if (!isPublic && !password) {
+    if (!isPublic && password) {
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(password, salt);
       const isPasswordMatch = await bcrypt.compare(
-        password,
+        hashedPassword,
         existingChatRoom.password,
       );
       if (!isPasswordMatch) {
