@@ -11,6 +11,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ChatRoomModule } from './chat-room/chat-room.module';
 import { ChatRoomModel } from './chat-room/entity/chat-room.entity';
 import { ChatModule } from './chat/chat.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ChatModule } from './chat/chat.module';
     CommonModule,
     ChatRoomModule,
     ChatModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [
