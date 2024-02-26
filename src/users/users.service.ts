@@ -42,10 +42,14 @@ export class UsersService {
   }
 
   //유저가 속한 채팅방을 불러옴
-  async getUserWithChatRooms(userId: number) {
-    return await this.usersRepository.findOne({
-      where: { id: userId },
-      relations: ['chatRooms', 'chatRooms.members'],
-    });
+  getUserWithChatRooms(userId: number) {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.chatRooms', 'chatRoom')
+      .leftJoinAndSelect('chatRoom.members', 'member')
+      .leftJoinAndSelect('chatRoom.admin', 'admin')
+      .where('user.id = :userId', { userId })
+      .orderBy('chatRoom.updatedAt', 'DESC') // chatRooms을 updatedAt 기준으로 내림차순 정렬
+      .getOne();
   }
 }
