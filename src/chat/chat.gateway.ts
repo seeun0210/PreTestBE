@@ -71,9 +71,21 @@ export class ChatGateway
     console.log(`Client disconnected: ${socket.id}`);
     // 클라이언트가 연결을 끊을 때 필요한 로직을 여기에 추가할 수 있습니다.
   }
-
-  // @SubscribeMessage('join room')
-  // joinRoom()
+  @SubscribeMessage('join_room')
+  async handleJoinRoom(
+    @MessageBody() data: { roomId: string },
+    @ConnectedSocket() socket: Socket,
+  ) {
+    if (!data.roomId) {
+      return;
+    }
+    socket.join(data.roomId);
+    console.log(`Socket ${socket.id} joined room ${data.roomId}`);
+    //join후에 채팅로그 불러오기
+    const chatLogs = await this.chatService.getChatLogs(+data.roomId);
+    //해당 룸에만 채탕로그 보내주기
+    this.server.to(data.roomId).emit('chat_history', chatLogs);
+  }
 
   @SubscribeMessage('message')
   async handleMessage(
@@ -82,7 +94,9 @@ export class ChatGateway
   ) {
     console.log('메시지가 올까요??', data, socket.user); // 클라이언트에서 보낸 데이터 출력
     // 여기에서 받은 메시지를 처리하는 로직 구현
-    await this.chatService.createChat(data, socket.user);
+    const savedMessage = await this.chatService.createChat(data, socket.user);
     // 예: 메시지 저장, 다른 클라이언트에 메시지 전송 등
+    console.log('서버->클라', savedMessage);
+    this.server.to(data.roomId).emit('message', savedMessage);
   }
 }

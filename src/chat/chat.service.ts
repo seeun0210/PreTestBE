@@ -9,6 +9,10 @@ export class ChatService {
   constructor(
     @InjectModel(ChatLog.name) private chatLogModel: Model<ChatLog>,
   ) {}
+  //채팅로그 불러오기
+  async getChatLogs(roomId: number) {
+    return await this.chatLogModel.find({ roomId: roomId });
+  }
 
   async createChat(data: any, user: UsersModel) {
     // console.log('여기는 chatService', data);
@@ -20,7 +24,7 @@ export class ChatService {
       sender: user.nickname, // 예시: sender 필드에 사용자 닉네임 저장
     });
     // console.log(newChat);
-    const savedChat = await newChat.save();
-    console.log('****', savedChat);
+    return await newChat.save();
+    // console.log('****', savedChat);
   }
 }
