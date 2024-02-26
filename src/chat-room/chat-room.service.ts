@@ -137,4 +137,9 @@ export class ChatRoomService {
     console.log('==========', chatRoomInfoWithMembers);
     return chatRoomInfoWithMembers;
   }
+
+  //채팅로그쌓일때 채팅방 업데이트
+  async updateChatRoomTime(roomId: string) {
+    await this.chatRoomRepository.update(roomId, { updatedAt: new Date() });
+  }
 }

@@ -118,6 +118,7 @@ export class ChatGateway
   ) {
     const savedMessage = await this.chatService.createChat(data, socket.user);
     console.log(savedMessage);
+    await this.chatRoomService.updateChatRoomTime(data.roomId);
     if (data.receiver) {
       // 귓속말인 경우, receiver에게만 메시지를 보냄
       const receiverSocketId = this.userSockets.get(data.receiver);
