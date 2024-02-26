@@ -6,6 +6,7 @@ import { UsersModel } from 'src/users/entities/users.entity';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import * as bcrypt from 'bcrypt';
 import { AddMemberDto } from './dto/add-member.dto';
+import { HASH_ROUNDS } from 'src/auth/const/auth.const';
 
 @Injectable()
 export class ChatRoomService {
@@ -26,8 +27,8 @@ export class ChatRoomService {
     let chatRoomPassword = null;
     if (password) {
       // 비밀번호를 bcrypt를 사용하여 해싱
-      const salt = await bcrypt.genSalt();
-      chatRoomPassword = await bcrypt.hash(password, salt);
+
+      chatRoomPassword = await bcrypt.hash(password, HASH_ROUNDS);
     }
 
     const chatRoomObject = this.chatRoomRepository.create({
@@ -62,12 +63,11 @@ export class ChatRoomService {
     }
     // 비공개 채팅방이고 비밀번호가 제공된 경우, 비밀번호 일치 여부 확인
     if (!existingChatRoom.isPublic && password) {
-      const salt = await bcrypt.genSalt();
-      const hashedPassword = await bcrypt.hash(password, salt);
       const isPasswordMatch = await bcrypt.compare(
-        hashedPassword,
+        password,
         existingChatRoom.password,
       );
+
       if (!isPasswordMatch) {
         throw new BadRequestException('비밀번호가 일치하지 않습니다.');
       }
