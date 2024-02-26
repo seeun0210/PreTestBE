@@ -18,6 +18,7 @@ import { UsersService } from 'src/users/users.service';
     UsersModule,
     CommonModule,
   ],
+  exports: [ChatRoomService],
   controllers: [ChatRoomController],
   providers: [ChatRoomService, AuthService],
 })

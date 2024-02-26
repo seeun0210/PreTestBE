@@ -7,6 +7,8 @@ import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from 'src/users/users.module';
+import { ChatRoomService } from 'src/chat-room/chat-room.service';
+import { ChatRoomModule } from 'src/chat-room/chat-room.module';
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { UsersModule } from 'src/users/users.module';
     MongooseModule.forFeature([{ name: ChatLog.name, schema: ChatLogSchema }]),
     AuthModule,
     UsersModule,
+    ChatRoomModule,
   ],
   providers: [ChatGateway, ChatService, AuthService],
 })

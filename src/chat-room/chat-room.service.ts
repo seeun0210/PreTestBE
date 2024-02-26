@@ -127,4 +127,14 @@ export class ChatRoomService {
     // 변경사항 저장
     await this.chatRoomRepository.save(existingChatRoom);
   }
+
+  //채팅방 멤버들 불러오기
+  async getChatRoomMembers(id: number) {
+    const chatRoomInfoWithMembers = await this.chatRoomRepository.findOne({
+      where: { id },
+      relations: ['members'],
+    });
+    console.log('==========', chatRoomInfoWithMembers);
+    return chatRoomInfoWithMembers;
+  }
 }
