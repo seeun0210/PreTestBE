@@ -83,7 +83,7 @@ export class ChatGateway
   @SubscribeMessage('join_room')
   async handleJoinRoom(
     @MessageBody() data: { roomId: string },
-    @ConnectedSocket() socket: Socket,
+    @ConnectedSocket() socket: Socket & { user: UsersModel },
   ) {
     if (!data.roomId) {
       return;
@@ -91,7 +91,13 @@ export class ChatGateway
     socket.join(data.roomId);
     console.log(`Socket ${socket.id} joined room ${data.roomId}`);
     //join후에 채팅로그 불러오기
-    const chatLogs = await this.chatService.getChatLogs(+data.roomId);
+    //이제 채팅로그 싹 다 보내주면 안됨.
+    //isPublic:true인 것들이랑
+    //isPublic:false라면 sender나 receiver 중 유저와 일치하는 것만 불러와야함
+    const chatLogs = await this.chatService.getChatLogs(
+      +data.roomId,
+      socket.user,
+    );
     //해당 룸에만 채탕로그 보내주기
     this.server.to(data.roomId).emit('chat_history', chatLogs);
 

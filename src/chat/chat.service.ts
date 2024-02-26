@@ -10,8 +10,21 @@ export class ChatService {
     @InjectModel(ChatLog.name) private chatLogModel: Model<ChatLog>,
   ) {}
   //채팅로그 불러오기
-  async getChatLogs(roomId: number) {
-    return await this.chatLogModel.find({ roomId: roomId });
+  async getChatLogs(roomId: number, user: UsersModel) {
+    // isPublic이 true이거나, isPublic이 false이면서 sender 또는 receiver가 현재 유저와 일치하는 경우
+    return await this.chatLogModel.find({
+      roomId: roomId,
+      $or: [
+        { isPublic: true }, // 공개 메시지
+        {
+          isPublic: false,
+          $or: [
+            { sender: user.nickname }, // 현재 유저가 보낸 비공개 메시지
+            { receiver: user.nickname }, // 현재 유저가 받은 비공개 메시지
+          ],
+        },
+      ],
+    });
   }
 
   async createChat(data: any, user: UsersModel) {
