@@ -12,6 +12,8 @@ import { ChatRoomModule } from './chat-room/chat-room.module';
 import { ChatRoomModel } from './chat-room/entity/chat-room.entity';
 import { ChatModule } from './chat/chat.module';
 import { FileModule } from './file/file.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -35,6 +37,12 @@ import { FileModule } from './file/file.module';
     ChatRoomModule,
     ChatModule,
     FileModule,
+    ServeStaticModule.forRoot({
+      //4022.jpg
+      //http://loacalhost:3000/public/posts/4022.jpg
+      // rootPath: PUBLIC_FOLDER_PATH,
+      // serveRoot: '/public',
+    }),
   ],
   controllers: [AppController],
   providers: [
