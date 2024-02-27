@@ -115,7 +115,7 @@ export class FileService {
       const content = await fs.promises.readFile(filePath, 'utf8');
       return content;
     } catch (error) {
-      throw new NotFoundException('File not found');
+      throw new NotFoundException('접근 불가능한 파일입니다!');
     }
   }
 
