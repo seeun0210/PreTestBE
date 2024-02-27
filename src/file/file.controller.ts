@@ -1,8 +1,12 @@
 import {
+  Body,
   Controller,
   Get,
   Headers,
+  InternalServerErrorException,
+  Patch,
   Post,
+  Put,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -75,16 +79,35 @@ export class FileController {
     );
 
     console.log('파일의 절대경로', absoluteFilePath);
-    // 파일이 실제로 존재하는지 확인하는 로직 추가 (예시)
     const readFileResult = await this.fileService.readFile(absoluteFilePath);
-    console.log('readfileResult ::', readFileResult);
+    // console.log('readfileResult ::', readFileResult);
     return { readFileResult, fullyDecoded };
-    // if (fs.existsSync(absoluteFilePath)) {
-    //   // 파일을 클라이언트에게 직접 전송
-    //   const result = await this.fileService.readFile(absoluteFilePath);
-    //   console.log('+++', result);
-    // } else {
-    //   // 파일이 존재하지 않는 경우, 적절한 HTTP 응답 전송
-    // }
+  }
+
+  //파일 수정 저장(파일 덮어쓰기)
+  @Put()
+  async updateFile(
+    @User() user: UsersModel,
+    @Body('readFileResult') fileContent: string,
+    @Body('fullyDecoded') filepath: string,
+  ) {
+    const absoluteFilePath = path.resolve(
+      process.cwd(), // 현재 작업 디렉토리를 기준으로 함
+      'uploads', // 'be'를 제외한 경로로 'uploads'가 프로젝트 루트에 있다고 가정
+      user.nickname,
+      filepath,
+    );
+    //해당 파일이 존재하는 부터 확인
+    if (fs.existsSync(absoluteFilePath)) {
+      //파일을 쓴다(덮어쓰기)
+      try {
+        console.log('파일 찾음!!');
+        await this.fileService.writeFile(absoluteFilePath, fileContent);
+        const result = await this.fileService.readFile(absoluteFilePath);
+        return { readFileResult: result, fullyDecoded: filepath };
+      } catch (e) {
+        throw new InternalServerErrorException('파일 덮어쓰기 중 에러 발생');
+      }
+    }
   }
 }
