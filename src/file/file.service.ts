@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
@@ -59,23 +59,31 @@ export class FileService {
     return unzipDir; // 압축 해제된 폴더 경로 반환
   }
 
-  private async unzipFile(
-    zipFilePath: string,
-    destPath: string,
-  ): Promise<void> {
-    try {
-      await fs
-        .createReadStream(zipFilePath)
+  //   private async unzipFile(
+  //     zipFilePath: string,
+  //     destPath: string,
+  //   ): Promise<void> {
+  //     try {
+  //       await fs
+  //         .createReadStream(zipFilePath)
+  //         .pipe(unzipper.Extract({ path: destPath }))
+  //         .promise();
+  //     } catch (error) {
+  //       console.error('압축 해제 중 오류 발생:', error);
+  //       throw new Error('압축 해제 실패');
+  //     }
+  //   }
+  async unzipFile(zipFilePath: string, destPath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.createReadStream(zipFilePath)
         .pipe(unzipper.Extract({ path: destPath }))
-        .promise();
-    } catch (error) {
-      console.error('압축 해제 중 오류 발생:', error);
-      throw new Error('압축 해제 실패');
-    }
+        .on('error', reject) // 에러 핸들링
+        .on('finish', resolve); // 성공적으로 완료되면 resolve 호출
+    });
   }
 
   // 파일 및 폴더 구조 분석
-  private async analyzeStructure(directory: string): Promise<any[]> {
+  async analyzeStructure(directory: string): Promise<any[]> {
     const entries = await fs.promises.readdir(directory, {
       withFileTypes: true,
     });
@@ -103,10 +111,28 @@ export class FileService {
     // 예: MongoDB, PostgreSQL 등의 데이터베이스 사용 가능
   }
   async readFile(filePath: string): Promise<string> {
-    return fs.promises.readFile(filePath, 'utf8');
+    try {
+      const content = await fs.promises.readFile(filePath, 'utf8');
+      return content;
+    } catch (error) {
+      throw new NotFoundException('File not found');
+    }
   }
 
   async writeFile(filePath: string, content: string): Promise<void> {
     await fs.promises.writeFile(filePath, content);
+  }
+
+  // FileService 내부에 추가
+  async getUsersFile(userNickname: string): Promise<any[]> {
+    const userUploadDir = path.join(this.uploadDir, userNickname);
+
+    // 지정된 사용자 디렉토리가 존재하는지 확인
+    if (!fs.existsSync(userUploadDir)) {
+      fs.mkdirSync(userUploadDir, { recursive: true });
+    }
+
+    // 디렉토리 구조 분석
+    return this.analyzeStructure(userUploadDir);
   }
 }

@@ -26,7 +26,7 @@ import { extname } from 'path';
         // .zip 파일과 .tar 파일만 허용
         if (!file.originalname.match(/\.(zip|tar)$/)) {
           return callback(
-            new BadRequestException('파일형식은 .tar .zip 만 가능!'),
+            new BadRequestException('파일형식은 .tar .zip 만 가능합니다!'),
             false,
           );
         }
