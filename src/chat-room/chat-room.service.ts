@@ -4,15 +4,17 @@ import { ILike, Repository } from 'typeorm';
 import { ChatRoomModel } from './entity/chat-room.entity';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { AddMemberDto } from './dto/add-member.dto';
-import { HASH_ROUNDS } from 'src/auth/const/auth.const';
+import { ConfigService } from '@nestjs/config';
+import { ENV_HASH_ROUNDS_KEY } from 'src/common/const/env-keys.const';
 
 @Injectable()
 export class ChatRoomService {
   constructor(
     @InjectRepository(ChatRoomModel)
     private readonly chatRoomRepository: Repository<ChatRoomModel>,
+    private readonly configService: ConfigService,
   ) {}
 
   async createChatRoom(user: UsersModel, createChatRoomDto: CreateChatRoomDto) {
@@ -28,7 +30,10 @@ export class ChatRoomService {
     if (password) {
       // 비밀번호를 bcrypt를 사용하여 해싱
 
-      chatRoomPassword = await bcrypt.hash(password, HASH_ROUNDS);
+      chatRoomPassword = await bcrypt.hash(
+        password,
+        parseInt(this.configService.get<string>(ENV_HASH_ROUNDS_KEY)),
+      );
     }
 
     const chatRoomObject = this.chatRoomRepository.create({

@@ -18,7 +18,7 @@ import { ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000', // 클라이언트 애플리케이션의 호스트
+    origin: 'http://15.165.113.58', // 클라이언트 애플리케이션의 호스트
     credentials: true,
   },
   namespace: '/chat',

@@ -32,6 +32,7 @@ export class FileController {
     @User() user: UsersModel,
   ) {
     // 파일을 서버의 지정된 위치에 저장 및 압축 해제
+    console.log(file);
     const unzipDir = await this.fileService.saveAndUnzipFile(
       user.nickname,
       file,
