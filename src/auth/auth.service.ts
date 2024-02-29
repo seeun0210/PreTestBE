@@ -1,21 +1,30 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { HASH_ROUNDS, JWT_SECRET } from './const/auth.const';
-import * as bcrypt from 'bcrypt';
+
+import * as bcrypt from 'bcryptjs';
 import { UsersModel } from 'src/users/entities/users.entity';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import {
+  ENV_HASH_ROUNDS_KEY,
+  ENV_JWT_SECRET_KEY,
+} from 'src/common/const/env-keys.const';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async registerWithEmail(user: RegisterUserDto) {
     //비밀번호 암호화
-    const hash = await bcrypt.hash(user.password, HASH_ROUNDS);
+    const hash = await bcrypt.hash(
+      user.password,
+      parseInt(this.configService.get<string>(ENV_HASH_ROUNDS_KEY)),
+    );
 
     const newUser = await this.usersService.createUser({
       ...user,
@@ -113,7 +122,7 @@ export class AuthService {
       type: isRefreshToken ? 'refresh' : 'access',
     };
     return this.jwtService.sign(payload, {
-      secret: JWT_SECRET,
+      secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
       //리프레시 토큰이면 만료시간 길게, 엑세스는 짧게
       //리프레시 토큰으로 엑세스 토큰 갱신할것이기 때문
       expiresIn: isRefreshToken ? 3600 : 300,
@@ -123,7 +132,9 @@ export class AuthService {
   //토큰 검증
   verifyToken(token: string) {
     try {
-      return this.jwtService.verify(token, { secret: JWT_SECRET });
+      return this.jwtService.verify(token, {
+        secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
+      });
     } catch (e) {
       throw new UnauthorizedException('토큰이 만료되었거나 잘못된 토큰입니다');
     }
@@ -132,7 +143,7 @@ export class AuthService {
   //refreshToken으로 AccessToken 재발급
   rotateToken(token: string, isRefreshToken: boolean) {
     const decoded = this.jwtService.verify(token, {
-      secret: JWT_SECRET,
+      secret: this.configService.get<string>(ENV_JWT_SECRET_KEY),
     });
 
     if (decoded.type !== 'refresh') {
