@@ -95,10 +95,11 @@ export class AuthService {
     if (!existingUser) {
       throw new UnauthorizedException('존재하지 않는 사용자입니다.');
     }
+    console.log(user.password);
 
     //여기까지 왔다면 비밀번호를 해싱해서 디비의 값과 비교해야한다.
-    const passOK = bcrypt.compare(user.password, existingUser.password);
-
+    const passOK = await bcrypt.compare(user.password, existingUser.password);
+    console.log(passOK);
     if (!passOK) {
       throw new UnauthorizedException('비밀번호가 틀렸습니다!');
     }
