@@ -14,8 +14,10 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  //proxy 설정
+  app.setGlobalPrefix('api');
   //cors설정
   app.enableCors();
-  await app.listen(8000);
+  await app.listen(3000);
 }
 bootstrap();

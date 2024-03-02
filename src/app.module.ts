@@ -26,9 +26,13 @@ import {
   ENV_POSTGRES_DB_PORT_KEY,
   ENV_POSTGRES_DB_USERNAME_KEY,
 } from './common/const/env-keys.const';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'), // `public` 폴더를 정적 파일 디렉토리로 사용
+    }),
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     MongooseModule.forRoot(
       `mongodb://${process.env[ENV_MONGO_DB_USER_KEY]}:${process.env[ENV_MONGO_DB_PASSWORD_KEY]}@${process.env[ENV_MONGO_DB_HOST_KEY]}:${process.env[ENV_MONGO_DB_PORT_KEY]}/${process.env[ENV_MONGO_DB_PORT_KEY]}?authSource=${process.env[ENV_MONGO_DB_AUTHSOURCE_KEY]}`,

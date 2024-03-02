@@ -47,7 +47,7 @@ export class BasicTokenGuard implements CanActivate {
       email,
       password,
     });
-
+    // console.log('basicTokenGuard::', user);
     //req는 요청이 끝날 때 까지 살아있기 때문에 응답으로 돌아갈 때까지 req.user라는 코드를 실행해 항상 가드에서 가져온 유저를 가져올 수 있다
     req.user = user;
 
